@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Storage Access Framework Client</string>
+    <string name="button_ACTION_GET_CONTENT">ACTION_GET_CONTENT</string>
+    <string name="button_ACTION_OPEN_DOCUMENT">ACTION_OPEN_DOCUMENT</string>
+    <string name="button_ACTION_CREATE_DOCUMENT">ACTION_CREATE_DOCUMENT</string>
+    <string name="enter_data">Enter data:</string>
+</resources>
