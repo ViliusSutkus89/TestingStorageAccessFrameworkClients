@@ -147,7 +147,6 @@ public class InstrumentedTests {
     @Before
     public void setUp() {
         Intents.init();
-        closeSoftKeyboard();
     }
 
     @After
