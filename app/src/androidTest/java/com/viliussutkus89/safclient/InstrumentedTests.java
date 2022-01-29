@@ -220,6 +220,7 @@ public class InstrumentedTests {
                         new Intent()
                                 .setData(randomFile.getUriFromFileProvider())
                                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 )
         );
 
