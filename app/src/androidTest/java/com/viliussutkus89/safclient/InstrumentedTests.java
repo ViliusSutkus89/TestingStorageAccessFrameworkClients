@@ -148,6 +148,10 @@ public class InstrumentedTests {
         ActivityScenario.launch(MainActivity.class).onActivity(activity -> {
             m_idlingResource = activity.getIdlingResource();
             IdlingRegistry.getInstance().register(m_idlingResource);
+
+            // Close system dialogs which may cover our Activity.
+            // Happens frequently on slow emulators.
+            activity.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         });
 
         Intents.init();
