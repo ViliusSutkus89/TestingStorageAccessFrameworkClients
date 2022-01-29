@@ -160,9 +160,9 @@ public class InstrumentedTests {
         RandomFile randomFile = new RandomFile();
         Intents.intending(hasAction(Intent.ACTION_CREATE_DOCUMENT)).respondWith(
                 new Instrumentation.ActivityResult(Activity.RESULT_OK,
-                        new Intent().setData(
-                                randomFile.getUriFromFileProvider()
-                        )
+                        new Intent()
+                                .setData(randomFile.getUriFromFileProvider())
+                                .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 )
         );
 
@@ -186,9 +186,9 @@ public class InstrumentedTests {
         randomFile.writeGeneratedContentToFile();
         Intents.intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(
                 new Instrumentation.ActivityResult(Activity.RESULT_OK,
-                        new Intent().setData(
-                                randomFile.getUriFromFileProvider()
-                        )
+                        new Intent()
+                                .setData(randomFile.getUriFromFileProvider())
+                                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 )
         );
 
@@ -205,9 +205,9 @@ public class InstrumentedTests {
         randomFile.writeGeneratedContentToFile();
         Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(
                 new Instrumentation.ActivityResult(Activity.RESULT_OK,
-                        new Intent().setData(
-                                randomFile.getUriFromFileProvider()
-                        )
+                        new Intent()
+                                .setData(randomFile.getUriFromFileProvider())
+                                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 )
         );
 
