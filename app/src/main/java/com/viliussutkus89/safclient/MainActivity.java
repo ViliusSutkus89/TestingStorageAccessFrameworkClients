@@ -34,7 +34,12 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.test.espresso.IdlingResource;
+import androidx.test.espresso.idling.CountingIdlingResource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,6 +48,18 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
+
+    @Nullable
+    private CountingIdlingResource m_idlingResource;
+
+    @VisibleForTesting
+    @NonNull
+    IdlingResource getIdlingResource() {
+        if (null == m_idlingResource) {
+            m_idlingResource = new CountingIdlingResource("MainActivity.m_idlingResource");
+        }
+        return m_idlingResource;
+    }
 
     public static String readFromUri(Uri uri, ContentResolver contentResolver) throws IOException {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
@@ -67,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "Reading failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
+
+                if (null != m_idlingResource) {
+                    m_idlingResource.decrement();
+                }
             }
     );
 
@@ -78,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
                         tv.setText(readFromUri(selectedDocument, getContentResolver()));
                     } catch (IOException e) {
                         Toast.makeText(this, "Reading failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                    if (null != m_idlingResource) {
+                        m_idlingResource.decrement();
                     }
                 }
             }
@@ -98,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
                     } finally {
                         text.clear();
                     }
+
+                    if (null != m_idlingResource) {
+                        m_idlingResource.decrement();
+                    }
                 }
             }
     );
@@ -108,6 +137,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.button_ACTION_GET_CONTENT).setOnClickListener(view -> {
+            if (null != m_idlingResource) {
+                m_idlingResource.increment();
+            }
+
             String mimeType = "*/*";
             m_getContent.launch(mimeType);
         });
@@ -115,11 +148,19 @@ public class MainActivity extends AppCompatActivity {
         // ACTION_OPEN_DOCUMENT and ACTION_CREATE_DOCUMENT are available since KitKat
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             findViewById(R.id.button_ACTION_OPEN_DOCUMENT).setOnClickListener(view -> {
+                if (null != m_idlingResource) {
+                    m_idlingResource.increment();
+                }
+
                 String mimeType = "*/*";
                 m_openDocument.launch(new String[]{mimeType});
             });
 
             findViewById(R.id.button_ACTION_CREATE_DOCUMENT).setOnClickListener(view -> {
+                if (null != m_idlingResource) {
+                    m_idlingResource.increment();
+                }
+
                 String suggestedOutputFilename = "sampleFile.txt";
                 m_createDocument.launch(suggestedOutputFilename);
             });

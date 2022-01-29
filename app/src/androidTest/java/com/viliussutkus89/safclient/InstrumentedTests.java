@@ -42,6 +42,8 @@ import android.os.Build;
 
 import androidx.core.content.FileProvider;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -63,7 +65,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Random;
-
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -140,16 +141,25 @@ public class InstrumentedTests {
         }
     }
 
+    private IdlingResource m_idlingResource;
 
     @Before
     public void setUp() {
-        ActivityScenario.launch(MainActivity.class);
+        ActivityScenario.launch(MainActivity.class).onActivity(activity -> {
+            m_idlingResource = activity.getIdlingResource();
+            IdlingRegistry.getInstance().register(m_idlingResource);
+        });
+
         Intents.init();
     }
 
     @After
     public void tearDown() {
         Intents.release();
+
+        if (null != m_idlingResource) {
+            IdlingRegistry.getInstance().unregister(m_idlingResource);
+        }
     }
 
     @Test

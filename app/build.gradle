@@ -19,6 +19,7 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.annotation:annotation:1.3.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -26,4 +27,6 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
+    // espresso-idling-resource used in main sourceSet as well. cannot be androidTestImplementation
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.4.0'
 }
