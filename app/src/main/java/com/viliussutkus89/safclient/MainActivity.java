@@ -74,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static void writeToUri(Uri uri, ContentResolver contentResolver, String data) throws IOException {
+        try (OutputStream outputStream = contentResolver.openOutputStream(uri, "wt")) {
+            outputStream.write(data.getBytes());
+        }
+    }
+
     private final ActivityResultLauncher<String> m_getContent = registerForActivityResult(
             new ActivityResultContracts.GetContent(), selectedDocument -> {
                 if (null != selectedDocument) {
@@ -96,9 +102,12 @@ public class MainActivity extends AppCompatActivity {
                 if (null != selectedDocument) {
                     TextView tv = findViewById(R.id.text_ACTION_OPEN_DOCUMENT);
                     try {
-                        tv.setText(readFromUri(selectedDocument, getContentResolver()));
+                        String textInFile = readFromUri(selectedDocument, getContentResolver());
+                        tv.setText(textInFile);
+                        String modifiedText = flipStringCase(textInFile);
+                        writeToUri(selectedDocument, getContentResolver(), modifiedText);
                     } catch (IOException e) {
-                        Toast.makeText(this, "Reading failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Reading or writing failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
 
                     if (null != m_idlingResource) {
@@ -114,14 +123,11 @@ public class MainActivity extends AppCompatActivity {
                 if (null != selectedOutputDocument) {
                     Editable text = ((EditText) findViewById(R.id.text_ACTION_CREATE_DOCUMENT)).getText();
                     String enteredText = text.toString();
-                    try (OutputStream outputStream = getContentResolver().openOutputStream(selectedOutputDocument, "wt")) {
-                        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream)) {
-                            outputStreamWriter.write(enteredText);
-                        }
+                    text.clear();
+                    try {
+                        writeToUri(selectedOutputDocument, getContentResolver(), enteredText);
                     } catch (IOException e) {
                         Toast.makeText(this, "Writing failed! " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    } finally {
-                        text.clear();
                     }
 
                     if (null != m_idlingResource) {
@@ -168,6 +174,20 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.button_ACTION_OPEN_DOCUMENT).setEnabled(false);
             findViewById(R.id.button_ACTION_CREATE_DOCUMENT).setEnabled(false);
         }
+    }
 
+    @VisibleForTesting
+    public static String flipStringCase(String str) {
+        StringBuilder stringBuilder = new StringBuilder(str.length());
+        for (int i = 0; i < str.length(); i++) {
+            char letter = str.charAt(i);
+            if (Character.isUpperCase(letter)) {
+                letter = Character.toLowerCase(letter);
+            } else if (Character.isLowerCase(letter)) {
+                letter = Character.toUpperCase(letter);
+            }
+            stringBuilder.append(letter);
+        }
+        return stringBuilder.toString();
     }
 }

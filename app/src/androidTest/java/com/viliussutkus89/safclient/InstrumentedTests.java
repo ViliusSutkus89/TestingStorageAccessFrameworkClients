@@ -185,7 +185,6 @@ public class InstrumentedTests {
         closeSoftKeyboard();
 
         onView(withId(R.id.button_ACTION_CREATE_DOCUMENT)).perform(click());
-
         onView(withId(R.id.text_ACTION_CREATE_DOCUMENT)).check(matches(withText(isEmptyString())));
 
         Assert.assertEquals(randomFile.m_generatedContent, randomFile.readFromFile());
@@ -227,6 +226,9 @@ public class InstrumentedTests {
         onView(withId(R.id.text_ACTION_OPEN_DOCUMENT)).check(matches(withText(isEmptyString())));
         onView(withId(R.id.button_ACTION_OPEN_DOCUMENT)).perform(click());
         onView(withId(R.id.text_ACTION_OPEN_DOCUMENT)).check(matches(withText(randomFile.m_generatedContent)));
+
+        String generatedContentFlippedCase = MainActivity.flipStringCase(randomFile.m_generatedContent);
+        Assert.assertEquals(generatedContentFlippedCase, randomFile.readFromFile());
         Assert.assertTrue(randomFile.m_file.delete());
     }
 }
