@@ -88,6 +88,10 @@ jobs:
           - arch: x86
             api-level: 30
             api-type-target: google_apis
+          # API-31, to debug a specific issue
+          - arch: x86_64
+            api-level: 31
+            api-type-target: google_apis
           # Latest image
           - arch: x86_64
             api-level: 32
