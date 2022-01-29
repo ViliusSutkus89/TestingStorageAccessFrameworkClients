@@ -41,8 +41,8 @@ import android.net.Uri;
 import android.os.Build;
 
 import androidx.core.content.FileProvider;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.SdkSuppress;
@@ -51,7 +51,6 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -141,11 +140,10 @@ public class InstrumentedTests {
         }
     }
 
-    @Rule
-    public ActivityScenarioRule<MainActivity> m_MainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
 
     @Before
     public void setUp() {
+        ActivityScenario.launch(MainActivity.class);
         Intents.init();
     }
 
