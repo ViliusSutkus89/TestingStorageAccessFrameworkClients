@@ -109,28 +109,25 @@ jobs:
           api-level: ${{ matrix.api-level }}
           arch: ${{ matrix.arch }}
           target: ${{ matrix.api-type-target }}
+          # Script needs to exit with return value of "./gradlew connectedCheck"
+          # Not the return value of pulling a screencap
           script: |
-            adb logcat > logcat.txt &
+            mkdir testResults
+            adb logcat > testResults/logcat.txt &
+
             ./gradlew connectedCheck
-            adb exec-out screencap -p > screencap.png
+            connectedCheckRetVal=$?
+
+            mv app/build/reports/androidTests/connected testResults/
+
+            adb shell screencap /data/local/tmp/screen.png
+            adb pull /data/local/tmp/screen.png testResults/
+
+            exit $connectedCheckRetVal
 
       - uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: logcat-${{ matrix.api-level }}-${{ matrix.arch }}.txt
-          path: logcat.txt
-          if-no-files-found: error
-
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: screencap-${{ matrix.api-level }}-${{ matrix.arch }}.png
-          path: screencap.png
-          if-no-files-found: error
-
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: instrumentedTestsReport-${{ matrix.api-level }}-${{ matrix.arch }}.tar
-          path: app/build/reports/androidTests/connected
+          name: testResults-${{ matrix.api-level }}-${{ matrix.arch }}-${{ matrix.api-type-target }}.txt
+          path: testResults
           if-no-files-found: error
