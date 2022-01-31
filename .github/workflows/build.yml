@@ -109,8 +109,16 @@ jobs:
           api-level: ${{ matrix.api-level }}
           arch: ${{ matrix.arch }}
           target: ${{ matrix.api-type-target }}
-          script: ./gradlew connectedCheck
+          script: |
+            adb logcat > logcat.txt &
+            ./gradlew connectedCheck
 
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: logcat-${{ matrix.api-level }}-${{ matrix.arch }}.txt
+          path: logcat.txt
+          if-no-files-found: error
 
       - uses: actions/upload-artifact@v2
         if: always()
