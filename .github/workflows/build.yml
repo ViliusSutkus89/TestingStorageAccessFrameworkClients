@@ -84,15 +84,11 @@ jobs:
           - arch: x86_64
             api-level: 21
             api-type-target: default
-          # Latest x86 image
+          # Newest x86 image
           - arch: x86
             api-level: 30
             api-type-target: google_apis
-          # API-31, to debug a specific issue
-          - arch: x86_64
-            api-level: 31
-            api-type-target: google_apis
-          # Latest image
+          # Newest in general
           - arch: x86_64
             api-level: 32
             api-type-target: google_apis
