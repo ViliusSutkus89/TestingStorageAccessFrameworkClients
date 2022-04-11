@@ -54,13 +54,13 @@ jobs:
       - name: Build and lint application
         run: ./gradlew build lintRelease
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: APKs
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lint-results-release.html
           path: app/build/reports/lint-results-release.html
@@ -148,7 +148,7 @@ jobs:
 
             test ! -f sorry_but_tests_are_failing
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: testResults-${{ matrix.api-level }}-${{ matrix.arch }}-${{ matrix.api-type-target }}
